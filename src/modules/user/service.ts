@@ -22,7 +22,7 @@ export class Service implements IService {
 
     public async signup(req: Request, res: Response, next: NextFunction): Promise<any> {
         try {
-            const { name, email, role } = req.body;
+            const { name, email } = req.body;
 
             // check existance of user by email or name
             const checkPayload: IUserCheck = { name, email };
@@ -39,13 +39,14 @@ export class Service implements IService {
                 name,
                 email,
                 password,
-                role,
             };
 
             const createdUser = await this.userService.createUser(payload);
             if (!createdUser) {
                 return res.status(422).json({ message: "Can't create user" });
             }
+
+            delete createdUser.password;
 
             // prepare response
             return res.status(201).json({

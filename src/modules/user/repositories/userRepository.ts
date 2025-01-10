@@ -3,6 +3,7 @@ import { getLogger } from "../../../shared/utils/helpers";
 import { Prisma } from "@prisma/client";
 import { DefaultArgs } from "@prisma/client/runtime/library";
 import { Database } from "../../../database/database";
+import { ICreateUserRequest } from "../models/interfaces/requests/ICreateUserRequest";
 
 const TAG = "blogs-be:user:userRepository";
 
@@ -29,7 +30,7 @@ export class UserRepository implements IUserRepository {
         }
     }
 
-    public async createUser(data: any): Promise<any> {
+    public async createUser(data: ICreateUserRequest): Promise<any> {
         try {
             return await this.userModel.create({ data });
         } catch (error) {
