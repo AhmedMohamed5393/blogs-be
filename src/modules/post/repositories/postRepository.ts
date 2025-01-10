@@ -123,7 +123,7 @@ export class PostRepository implements IPostRepository {
         } catch (error) {
             const log = {
                 message: error,
-                tag: `${TAG}:update`,
+                tag: `${TAG}:is_exists`,
                 status: 500,
             };
 
@@ -154,7 +154,7 @@ export class PostRepository implements IPostRepository {
         } catch (error) {
             const log = {
                 message: error,
-                tag: `${TAG}:delete`,
+                tag: `${TAG}:soft_delete`,
                 status: 500,
             };
 
