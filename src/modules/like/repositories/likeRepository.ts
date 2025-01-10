@@ -8,10 +8,10 @@ const TAG = "blogs-be:like:likeRepository";
 
 export class LikeRepository implements ILikeRepository {
     private database: Database;
-    private repository: Prisma.LikeDelegate<DefaultArgs, Prisma.PrismaClientOptions>;
+    private likeModel: Prisma.LikeDelegate<DefaultArgs, Prisma.PrismaClientOptions>;
         
     constructor() {
         this.database = new Database();
-        this.repository = this.database.getRepository('like');
+        this.likeModel = this.database.getRepository('like');
     }
 }

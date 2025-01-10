@@ -8,16 +8,16 @@ const TAG = "blogs-be:user:userRepository";
 
 export class UserRepository implements IUserRepository {
     private database: Database;
-    private repository: Prisma.UserDelegate<DefaultArgs, Prisma.PrismaClientOptions>;
+    private userModel: Prisma.UserDelegate<DefaultArgs, Prisma.PrismaClientOptions>;
     
     constructor() {
         this.database = new Database();
-        this.repository = this.database.getRepository('user');
+        this.userModel = this.database.getRepository('user');
     }
     
     public async getUserBy(where: any, select: any): Promise<any> {
         try {
-            return await this.repository.findFirst({ select, where });
+            return await this.userModel.findFirst({ select, where });
         } catch (error) {
             const log = {
                 message: error,
@@ -31,7 +31,7 @@ export class UserRepository implements IUserRepository {
 
     public async createUser(data: any): Promise<any> {
         try {
-            return await this.repository.create({ data });
+            return await this.userModel.create({ data });
         } catch (error) {
             const log = {
                 message: error,

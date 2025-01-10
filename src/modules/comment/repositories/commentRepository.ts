@@ -8,10 +8,10 @@ const TAG = "blogs-be:comment:commentRepository";
 
 export class CommentRepository implements ICommentRepository {
     private database: Database;
-    private repository: Prisma.CommentDelegate<DefaultArgs, Prisma.PrismaClientOptions>;
+    private commentModel: Prisma.CommentDelegate<DefaultArgs, Prisma.PrismaClientOptions>;
         
     constructor() {
         this.database = new Database();
-        this.repository = this.database.getRepository('comment');
+        this.commentModel = this.database.getRepository('comment');
     }
 }

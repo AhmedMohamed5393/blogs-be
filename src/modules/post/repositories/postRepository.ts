@@ -8,10 +8,10 @@ const TAG = "blogs-be:post:postRepository";
 
 export class PostRepository implements IPostRepository {
     private database: Database;
-    private repository: Prisma.PostDelegate<DefaultArgs, Prisma.PrismaClientOptions>;
+    private postModel: Prisma.PostDelegate<DefaultArgs, Prisma.PrismaClientOptions>;
     
     constructor() {
         this.database = new Database();
-        this.repository = this.database.getRepository('post');
+        this.postModel = this.database.getRepository('post');
     }
 }
