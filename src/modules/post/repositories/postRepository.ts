@@ -114,10 +114,10 @@ export class PostRepository implements IPostRepository {
         }
     }
 
-    public async is_exists(id: number): Promise<any> {
+    public async is_exists(id: number, userId: number): Promise<any> {
         try {
             return await this.postModel.findUnique({
-                where: { id: id, deletedAt: null },
+                where: { id: id, userId: userId, deletedAt: null },
                 select: { id: true },
             });
         } catch (error) {

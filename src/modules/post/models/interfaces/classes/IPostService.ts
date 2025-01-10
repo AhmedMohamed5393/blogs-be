@@ -9,7 +9,7 @@ export interface IPostService {
 
     getOneById(id: number): Promise<any>;
         
-    checkExistence(id: number): Promise<any>;
+    checkExistence(id: number, userId: number): Promise<any>;
 
     updatePost(id: number, data: IUpdatePostRequest): Promise<any>;
     

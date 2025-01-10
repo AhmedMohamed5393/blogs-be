@@ -87,9 +87,10 @@ export class Service implements IService {
 
     public async update(req: any, res: any, next: any): Promise<any> {
         try {
+            const userId = +res.locals.user.id;
             const { params: { id }, body } = req;
 
-            const is_post_exists = await this.postService.checkExistence(+id);
+            const is_post_exists = await this.postService.checkExistence(+id, userId);
             if (!is_post_exists) {
                 return res.status(422).json({ message: "Post isn't found" });
             }
@@ -115,9 +116,10 @@ export class Service implements IService {
     
     public async delete(req: any, res: any, next: any): Promise<any> {
         try {
+            const userId = +res.locals.user.id;
             const id = +req.params.id;
 
-            const is_post_exists = await this.postService.checkExistence(id);
+            const is_post_exists = await this.postService.checkExistence(id, userId);
             if (!is_post_exists) {
                 return res.status(422).json({ message: "Post isn't found" });
             }

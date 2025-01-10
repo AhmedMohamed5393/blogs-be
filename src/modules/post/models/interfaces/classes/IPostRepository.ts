@@ -11,7 +11,7 @@ export interface IPostRepository {
 
     findUnique(id: number): Promise<any>;
 
-    is_exists(id: number): Promise<any>;
+    is_exists(id: number, userId: number): Promise<any>;
 
     update(id: number, data: IUpdatePostRequest): Promise<any>;
 

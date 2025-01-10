@@ -76,9 +76,9 @@ export class PostService implements IPostService {
         }
     }
 
-    public async checkExistence(id: number): Promise<any> {
+    public async checkExistence(id: number, userId: number): Promise<any> {
         try {
-            return await this.repository.is_exists(id);
+            return await this.repository.is_exists(id, userId);
         } catch (error) {
             const log = {
                 message: error,
