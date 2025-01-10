@@ -36,7 +36,7 @@ export class Service implements IService {
 
     public async findAll(req: any, res: any, next: any): Promise<any> {
         try {
-            return res.status(201).json({
+            return res.status(200).json({
                 data: [],
             });
         } catch (error) {
@@ -54,7 +54,7 @@ export class Service implements IService {
 
     public async findOne(req: any, res: any, next: any): Promise<any> {
         try {
-            return res.status(201).json({
+            return res.status(200).json({
                 data: {},
             });
         } catch (error) {
@@ -72,7 +72,7 @@ export class Service implements IService {
 
     public async update(req: any, res: any, next: any): Promise<any> {
         try {
-            return res.status(201).json({
+            return res.status(200).json({
                 message: "Post is updated successfully",
                 data: {},
             });
@@ -91,7 +91,7 @@ export class Service implements IService {
     
     public async delete(req: any, res: any, next: any): Promise<any> {
         try {
-            return res.status(201).json({
+            return res.status(200).json({
                 message: "Post is removed successfully",
                 data: {},
             });

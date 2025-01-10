@@ -19,7 +19,7 @@ export class Service implements IService {
         try {
             const action = 'liked'; // liked or unliked
             
-            return res.status(201).json({
+            return res.status(200).json({
                 message: `Item is ${action} successfully`,
                 data: {},
             });
@@ -40,7 +40,7 @@ export class Service implements IService {
         try {
             const action = 'liked'; // liked or unliked
             
-            return res.status(201).json({
+            return res.status(200).json({
                 message: `Item is ${action} successfully`,
                 data: {},
             });
