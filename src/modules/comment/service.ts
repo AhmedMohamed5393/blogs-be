@@ -3,6 +3,8 @@ import { ICommentService } from "./models/interfaces/classes/ICommentService";
 import { CommentService } from "./services/commentService";
 import { IService } from "./models/interfaces/classes/IService";
 import { getLogger } from "../../shared/utils/helpers";
+import { PageOptionsDto } from "../../shared/pagination/pageOption.dto";
+import { ICreateCommentRequest } from "./models/interfaces/requests/ICreateCommentRequest";
 
 const TAG = "blogs-be:comment:service";
 
@@ -17,9 +19,17 @@ export class Service implements IService {
 
     public async create(req: any, res: any, next: any): Promise<any> {
         try {
+            const userId = +res.locals.user.id;
+            const payload: ICreateCommentRequest = {
+                userId: userId,
+                postId: req.body.postId,
+                content: req.body.content,
+            };
+            const comment = await this.commentService.createComment(payload);
+
             return res.status(201).json({
                 message: "Comment is created successfully",
-                data: {},
+                data: comment,
             });
         } catch (error) {
             const log = {
@@ -36,9 +46,10 @@ export class Service implements IService {
 
     public async findAll(req: any, res: any, next: any): Promise<any> {
         try {
-            return res.status(200).json({
-                data: [],
-            });
+            const userId = +res.locals.user.id;
+            const { postId, ...pageOptionsDto } = req.query;
+            const data = await this.commentService.getPaginatedList(userId, pageOptionsDto, +postId);
+            return res.status(200).json(data);
         } catch (error) {
             const log = {
                 message: error,
@@ -54,9 +65,13 @@ export class Service implements IService {
 
     public async findOne(req: any, res: any, next: any): Promise<any> {
         try {
-            return res.status(200).json({
-                data: {},
-            });
+            const id = +req.params.id;
+            const data = await this.commentService.getOneById(id);
+            if (!data) {
+                return res.status(404).json({ message: "Comment isn't found" });
+            }
+
+            return res.status(200).json(data);
         } catch (error) {
             const log = {
                 message: error,
@@ -72,9 +87,19 @@ export class Service implements IService {
 
     public async update(req: any, res: any, next: any): Promise<any> {
         try {
+            const userId = +res.locals.user.id;
+            const { params: { id }, body } = req;
+
+            const is_comment_exists = await this.commentService.checkExistence(+id, userId, +body.postId);
+            if (!is_comment_exists) {
+                return res.status(422).json({ message: "Comment isn't found" });
+            }
+
+            const comment = await this.commentService.updateComment(+id, body);
+
             return res.status(200).json({
                 message: "Comment is updated successfully",
-                data: {},
+                data: comment,
             });
         } catch (error) {
             const log = {
@@ -91,10 +116,16 @@ export class Service implements IService {
     
     public async delete(req: any, res: any, next: any): Promise<any> {
         try {
-            return res.status(200).json({
-                message: "Comment is removed successfully",
-                data: {},
-            });
+            const userId = +res.locals.user.id;
+            const id = +req.params.id;
+
+            const is_comment_exists = await this.commentService.checkExistence(id, userId);
+            if (!is_comment_exists) {
+                return res.status(422).json({ message: "Comment isn't found" });
+            }
+
+            await this.commentService.deleteComment(id);
+            return res.status(200).json({ message: "Comment is removed successfully" });
         } catch (error) {
             const log = {
                 message: error,
