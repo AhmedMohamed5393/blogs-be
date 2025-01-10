@@ -3,6 +3,8 @@ import { IPostService } from "./models/interfaces/classes/IPostService";
 import { PostService } from "./services/postService";
 import { IService } from "./models/interfaces/classes/IService";
 import { getLogger } from "../../shared/utils/helpers";
+import { ICreatePostRequest } from "./models/interfaces/requests/ICreatePostRequest";
+import { PageOptionsDto } from "../../shared/pagination/pageOption.dto";
 
 const TAG = "blogs-be:post:service";
 
@@ -17,9 +19,17 @@ export class Service implements IService {
 
     public async create(req: any, res: any, next: any): Promise<any> {
         try {
+            const userId = +res.locals.user.id;
+            const payload: ICreatePostRequest = {
+                userId: userId,
+                title: req.body.title,
+                content: req.body.content,
+            };
+            const post = await this.postService.createPost(payload);
+
             return res.status(201).json({
                 message: "Post is created successfully",
-                data: {},
+                data: post,
             });
         } catch (error) {
             const log = {
@@ -36,9 +46,10 @@ export class Service implements IService {
 
     public async findAll(req: any, res: any, next: any): Promise<any> {
         try {
-            return res.status(200).json({
-                data: [],
-            });
+            const userId = +res.locals.user.id;
+            const pageOptionsDto: PageOptionsDto = req.query;
+            const data = await this.postService.getPaginatedList(userId, pageOptionsDto);
+            return res.status(200).json(data);
         } catch (error) {
             const log = {
                 message: error,
@@ -54,9 +65,13 @@ export class Service implements IService {
 
     public async findOne(req: any, res: any, next: any): Promise<any> {
         try {
-            return res.status(200).json({
-                data: {},
-            });
+            const id = +req.params.id;
+            const data = await this.postService.getOneById(id);
+            if (!data) {
+                return res.status(404).json({ message: "Post isn't found" });
+            }
+
+            return res.status(200).json(data);
         } catch (error) {
             const log = {
                 message: error,
@@ -72,9 +87,18 @@ export class Service implements IService {
 
     public async update(req: any, res: any, next: any): Promise<any> {
         try {
+            const { params: { id }, body } = req;
+
+            const is_post_exists = await this.postService.checkExistence(+id);
+            if (!is_post_exists) {
+                return res.status(422).json({ message: "Post isn't found" });
+            }
+
+            const post = await this.postService.updatePost(+id, body);
+
             return res.status(200).json({
                 message: "Post is updated successfully",
-                data: {},
+                data: post,
             });
         } catch (error) {
             const log = {
@@ -91,10 +115,15 @@ export class Service implements IService {
     
     public async delete(req: any, res: any, next: any): Promise<any> {
         try {
-            return res.status(200).json({
-                message: "Post is removed successfully",
-                data: {},
-            });
+            const id = +req.params.id;
+
+            const is_post_exists = await this.postService.checkExistence(id);
+            if (!is_post_exists) {
+                return res.status(422).json({ message: "Post isn't found" });
+            }
+
+            await this.postService.deletePost(id);
+            return res.status(200).json({ message: "Post is removed successfully" });
         } catch (error) {
             const log = {
                 message: error,
