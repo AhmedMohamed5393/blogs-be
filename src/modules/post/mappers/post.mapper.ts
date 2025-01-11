@@ -27,7 +27,6 @@ export class PostMapper {
     public getItemsWithLikesMapper(posts: any[], userId?: number) {
         return posts.map((post) => {
             post.is_liked = !!post.likes.find((like) => like.userId == userId);
-            post.likes = post.likes.length;
             
             if (post.comments?.length) {
                 post.comments = this.commentMapper.getItemsWithLikesMapper(post.comments, userId);

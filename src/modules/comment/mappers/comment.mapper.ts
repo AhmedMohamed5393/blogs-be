@@ -21,7 +21,6 @@ export class CommentMapper {
     public getItemsWithLikesMapper(comments: any[], userId?: number) {
         return comments.map((comment) => {
             comment.is_liked = !!comment.likes.find((like) => like.userId == userId);
-            comment.likes = comment.likes.length;
             return comment;
         });
     }
