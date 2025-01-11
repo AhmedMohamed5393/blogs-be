@@ -5,9 +5,9 @@ import { IUpdatePostRequest } from "../requests/IUpdatePostRequest";
 export interface IPostService {
     createPost(createDto: CreateDto): Promise<any>;
 
-    getPaginatedList(userId: number, pageOptionsDto: PageOptionsDto): Promise<any>;
+    getPaginatedList(pageOptionsDto: PageOptionsDto, userId?: number): Promise<any>;
 
-    getOneById(id: number): Promise<any>;
+    getOneById(id: number, userId?: number): Promise<any>;
         
     checkExistence(id: number, userId: number): Promise<any>;
 

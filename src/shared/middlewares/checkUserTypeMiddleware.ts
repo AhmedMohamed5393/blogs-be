@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { IMiddleware } from "../interfaces/IMiddleware";
 import { getLogger } from "../utils/helpers";
-import { getUserData, verifyToken } from "../utils/jwt";
+import { decryptToken, getUserData } from "../utils/jwt";
 
-const TAG = "blogs-be:authMiddleware";
+const TAG = "blogs-be:checkUserTypeMiddleware";
 
-export class AuthMiddleware implements IMiddleware {
+export class CheckUserTypeMiddleware implements IMiddleware {
     constructor() {}
 
     public async execute(req: Request, res: Response, next: NextFunction) {
@@ -13,13 +13,11 @@ export class AuthMiddleware implements IMiddleware {
         
         try {
             const credentials: string = cookies?.token || headers?.authorization;
-            if (!credentials || !credentials.startsWith("eyJ")) {
-                return res.status(401).json({ message: "Unauthorized" });
+            if (credentials) {
+                const token: string = credentials || credentials.split(" ")[1];
+                const payload = decryptToken(token);
+                res.locals.user = await getUserData(payload?.username);
             }
-
-            const token: string = credentials || credentials.split(" ")[1];
-            const payload = verifyToken(token);
-            res.locals.user = await getUserData(payload.username);
             
             next();
         } catch (error) {
@@ -30,8 +28,6 @@ export class AuthMiddleware implements IMiddleware {
             };
 
             getLogger(log);
-
-            return res.status(401).json({ message: "Unauthorized" });
         }
     }
 }

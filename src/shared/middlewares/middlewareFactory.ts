@@ -1,6 +1,7 @@
 import { IMiddleware } from "../interfaces/IMiddleware";
 import { IMiddlewareFactory } from "../interfaces/IMiddlewareFactory";
 import { AuthMiddleware } from "./authMiddleware";
+import { CheckUserTypeMiddleware } from "./checkUserTypeMiddleware";
 import { IdValidationMiddleware } from "./idValidationMiddleware";
 
 export class MiddlewareFactory implements IMiddlewareFactory {
@@ -18,6 +19,7 @@ export class MiddlewareFactory implements IMiddlewareFactory {
     private createMiddlewares(): void {
         this.middlewareMap.set(AuthMiddleware.name, new AuthMiddleware());
         this.middlewareMap.set(IdValidationMiddleware.name, new IdValidationMiddleware());
+        this.middlewareMap.set(CheckUserTypeMiddleware.name, new CheckUserTypeMiddleware());
     }
 }
 

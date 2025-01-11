@@ -64,7 +64,7 @@ export class CommentRepository implements ICommentRepository {
                     user: { select: { id: true, name: true } },
                     likes: {
                         where: { deletedAt: null },
-                        select: { id: true },
+                        select: { id: true, userId: true },
                     },
                 },
                 skip: skip,
@@ -100,7 +100,7 @@ export class CommentRepository implements ICommentRepository {
                     },
                     likes: {
                         where: { deletedAt: null },
-                        select: { id: true },
+                        select: { id: true, userId: true },
                     },
                 },
             });

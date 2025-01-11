@@ -43,9 +43,10 @@ export class CommentService implements ICommentService {
 
     public async getPaginatedList(userId: number, pageOptionsDto: PageOptionsDto, postId?: number): Promise<any> {
         try {
-            const items = await this.repository.findMany(userId, pageOptionsDto, postId);
+            const comments = await this.repository.findMany(userId, pageOptionsDto, postId);
+            const items = this.commentMapper.getItemsWithLikesMapper(comments, userId);
             const total = await this.repository.count(userId);
-            const result = this.commentMapper.getCommentsListMapper(total, pageOptionsDto, items);
+            const result = this.commentMapper.getPaginatedListMapper(total, items.length, pageOptionsDto);
             return result;
         } catch (error) {
             const log = {

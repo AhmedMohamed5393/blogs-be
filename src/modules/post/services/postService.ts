@@ -6,7 +6,6 @@ import { getLogger } from "../../../shared/utils/helpers";
 import { ICreatePostRequest } from "../models/interfaces/requests/ICreatePostRequest";
 import { IUpdatePostRequest } from "../models/interfaces/requests/IUpdatePostRequest";
 import { PageOptionsDto } from "../../../shared/pagination/pageOption.dto";
-import { PageMeta } from "../../../shared/pagination/page-meta";
 import { PostMapper } from "../mappers/post.mapper";
 
 const TAG = "blogs-be:post:postService";
@@ -42,12 +41,13 @@ export class PostService implements IPostService {
         }
     }
 
-    public async getPaginatedList(userId: number, pageOptionsDto: PageOptionsDto): Promise<any> {
+    public async getPaginatedList(pageOptionsDto: PageOptionsDto, userId?: number): Promise<any> {
         try {
-            const items = await this.repository.findMany(userId, pageOptionsDto);
+            const posts = await this.repository.findMany(pageOptionsDto, userId);
+            const data = this.postMapper.getItemsWithLikesMapper(posts, userId);
             const total = await this.repository.count(userId);
-            const result = this.postMapper.getPostsListMapper(total, pageOptionsDto, items);
-            return result;
+            const meta = this.postMapper.getPaginatedListMapper(total, data.length, pageOptionsDto);
+            return { meta, data };
         } catch (error) {
             const log = {
                 message: error,
@@ -59,12 +59,11 @@ export class PostService implements IPostService {
         }
     }
 
-    public async getOneById(id: number): Promise<any> {
+    public async getOneById(id: number, userId?: number): Promise<any> {
         try {
             const post = await this.repository.findUnique(id);
-            post.likes = post.likes.length;
-
-            return post;
+            const mappedItems = this.postMapper.getItemsWithLikesMapper([post], userId);
+            return mappedItems[0];
         } catch (error) {
             const log = {
                 message: error,

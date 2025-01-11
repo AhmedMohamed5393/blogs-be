@@ -7,7 +7,7 @@ export interface IPostRepository {
 
     count(userId: number): Promise<any>;
 
-    findMany(userId: number, pageOptionsDto: PageOptionsDto): Promise<any>;
+    findMany(pageOptionsDto: PageOptionsDto, userId?: number): Promise<any>;
 
     findUnique(id: number): Promise<any>;
 

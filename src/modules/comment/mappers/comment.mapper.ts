@@ -2,19 +2,12 @@ import { PageMeta } from "../../../shared/pagination/page-meta";
 import { PageOptionsDto } from "../../../shared/pagination/pageOption.dto";
 
 export class CommentMapper {
-    public getCommentsListMapper(total: number, options: PageOptionsDto, items: any[]) {
-        const data = items.map((item) => {
-            item.likes = item.likes.length;
-            return item;
-        });
-        
+    public getPaginatedListMapper(total: number, itemsPerPage: number, options: PageOptionsDto) {
         const pageOptionsDto = {
             ...options,
             page: +options.page,
             take: +options.take,
         } as PageOptionsDto;
-
-        const itemsPerPage = items.length;
 
         const meta = new PageMeta({
             itemsPerPage,
@@ -22,6 +15,14 @@ export class CommentMapper {
             pageOptionsDto,
         });
 
-        return { meta, data };
+        return meta;
+    }
+
+    public getItemsWithLikesMapper(comments: any[], userId?: number) {
+        return comments.map((comment) => {
+            comment.is_liked = !!comment.likes.find((like) => like.userId == userId);
+            comment.likes = comment.likes.length;
+            return comment;
+        });
     }
 }

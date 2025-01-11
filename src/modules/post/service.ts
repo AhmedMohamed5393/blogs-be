@@ -46,9 +46,9 @@ export class Service implements IService {
 
     public async findAll(req: any, res: any, next: any): Promise<any> {
         try {
-            const userId = +res.locals.user.id;
+            const userId = +res.locals.user?.id;
             const pageOptionsDto: PageOptionsDto = req.query;
-            const data = await this.postService.getPaginatedList(userId, pageOptionsDto);
+            const data = await this.postService.getPaginatedList(pageOptionsDto, userId);
             return res.status(200).json(data);
         } catch (error) {
             const log = {
@@ -66,7 +66,8 @@ export class Service implements IService {
     public async findOne(req: any, res: any, next: any): Promise<any> {
         try {
             const id = +req.params.id;
-            const data = await this.postService.getOneById(id);
+            const userId = +res.locals.user?.id;
+            const data = await this.postService.getOneById(id, userId);
             if (!data) {
                 return res.status(404).json({ message: "Post isn't found" });
             }

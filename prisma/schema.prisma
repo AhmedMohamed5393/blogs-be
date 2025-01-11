@@ -14,15 +14,16 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  email     String   @unique
-  password  String
-  posts     Post[]
-  comments  Comment[]
-  likes     Like[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            Int           @id @default(autoincrement())
+  name          String        @unique
+  email         String        @unique
+  password      String
+  posts         Post[]
+  comments      Comment[]
+  post_likes    PostLike[]
+  comment_likes CommentLike[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 }
 
 model Post {
@@ -53,8 +54,6 @@ model Comment {
 
 model Like {
   id        Int      @id @default(autoincrement())
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
   postLike  PostLike? // One-to-one relationship with PostLike
   commentLike CommentLike? // One-to-one relationship with CommentLike
   createdAt DateTime @default(now())
@@ -64,8 +63,10 @@ model Like {
 
 model PostLike {
   id        Int      @id @default(autoincrement())
+  userId    Int
   postId    Int
   likeId    Int      @unique // One-to-one relationship with Like
+  user      User     @relation(fields: [userId], references: [id])
   post      Post     @relation(fields: [postId], references: [id])
   like      Like     @relation(fields: [likeId], references: [id])
   createdAt DateTime @default(now())
@@ -75,8 +76,10 @@ model PostLike {
 
 model CommentLike {
   id        Int      @id @default(autoincrement())
+  userId    Int
   commentId Int
   likeId    Int      @unique // One-to-one relationship with Like
+  user      User     @relation(fields: [userId], references: [id])
   comment   Comment  @relation(fields: [commentId], references: [id])
   like      Like     @relation(fields: [likeId], references: [id])
   createdAt DateTime @default(now())

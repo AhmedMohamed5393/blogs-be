@@ -46,13 +46,17 @@ export class PostRepository implements IPostRepository {
         }
     }
 
-    public async findMany(userId: number, pageOptionsDto: PageOptionsDto): Promise<any> {
+    public async findMany(pageOptionsDto: PageOptionsDto, userId?: number): Promise<any> {
         try {
             const take = +pageOptionsDto.take || 10;
             const skip = (pageOptionsDto.page - 1) * take || 0;
+            const where = { deletedAt: null };
+            if (userId) {
+                where['userId'] = userId;
+            }
 
             return await this.postModel.findMany({
-                where: { userId: userId, deletedAt: null },
+                where: where,
                 select: {
                     id: true,
                     title: true,
@@ -60,7 +64,7 @@ export class PostRepository implements IPostRepository {
                     user: { select: { id: true, name: true } },
                     likes: {
                         where: { deletedAt: null },
-                        select: { id: true },
+                        select: { id: true, userId: true },
                     },
                 },
                 skip: skip,
@@ -89,7 +93,7 @@ export class PostRepository implements IPostRepository {
                     user: { select: { id: true, name: true } },
                     likes: {
                         where: { deletedAt: null },
-                        select: { id: true },
+                        select: { id: true, userId: true },
                     },
                     comments: {
                         where: { deletedAt: null },
@@ -97,6 +101,10 @@ export class PostRepository implements IPostRepository {
                             id: true,
                             content: true,
                             user: { select: { id: true, name: true } },
+                            likes: {
+                                where: { deletedAt: null },
+                                select: { id: true, userId: true },
+                            },
                         },
                         orderBy: { createdAt: 'desc' },
                         take: 10,
