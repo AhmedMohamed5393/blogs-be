@@ -4,7 +4,6 @@ import { PostService } from "./services/postService";
 import { IService } from "./models/interfaces/classes/IService";
 import { getLogger } from "../../shared/utils/helpers";
 import { ICreatePostRequest } from "./models/interfaces/requests/ICreatePostRequest";
-import { PageOptionsDto } from "../../shared/pagination/pageOption.dto";
 
 const TAG = "blogs-be:post:service";
 
@@ -46,9 +45,8 @@ export class Service implements IService {
 
     public async findAll(req: any, res: any, next: any): Promise<any> {
         try {
-            const userId = +res.locals.user?.id;
-            const pageOptionsDto: PageOptionsDto = req.query;
-            const data = await this.postService.getPaginatedList(pageOptionsDto, userId);
+            const { userId, ...pageOptionsDto } = req.query;
+            const data = await this.postService.getPaginatedList(pageOptionsDto, +userId);
             return res.status(200).json(data);
         } catch (error) {
             const log = {
@@ -66,7 +64,7 @@ export class Service implements IService {
     public async findOne(req: any, res: any, next: any): Promise<any> {
         try {
             const id = +req.params.id;
-            const userId = +res.locals.user?.id;
+            const userId = !res.locals.user?.id ? null : +res.locals.user?.id;
             const data = await this.postService.getOneById(id, userId);
             if (!data) {
                 return res.status(404).json({ message: "Post isn't found" });

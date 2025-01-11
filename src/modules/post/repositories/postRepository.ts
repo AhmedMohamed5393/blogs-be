@@ -9,6 +9,16 @@ import { PageOptionsDto } from "../../../shared/pagination/pageOption.dto";
 
 const TAG = "blogs-be:post:postRepository";
 
+const select_likes = (where: any) => {
+    return !where['userId'] ? {} : {
+        likes: {
+            where: where,
+            select: { id: true },
+            take: 1,
+        },
+    };
+};
+
 export class PostRepository implements IPostRepository {
     private database: Database;
     private postModel: Prisma.PostDelegate<DefaultArgs, Prisma.PrismaClientOptions>;
@@ -32,9 +42,14 @@ export class PostRepository implements IPostRepository {
         }
     }
     
-    public async count(userId: number): Promise<any> {
+    public async count(userId?: number): Promise<any> {
         try {
-            return await this.postModel.count({ where: { userId: userId, deletedAt: null } });
+            const where = { deletedAt: null };
+            if (userId) {
+                where['userId'] = userId;
+            }
+
+            return await this.postModel.count({ where: where });
         } catch (error) {
             const log = {
                 message: error,
@@ -51,8 +66,10 @@ export class PostRepository implements IPostRepository {
             const take = +pageOptionsDto.take || 10;
             const skip = (pageOptionsDto.page - 1) * take || 0;
             const where = { deletedAt: null };
+            const like_condition = { like: { deletedAt: null } };
             if (userId) {
                 where['userId'] = userId;
+                like_condition['userId'] = userId;
             }
 
             return await this.postModel.findMany({
@@ -62,11 +79,7 @@ export class PostRepository implements IPostRepository {
                     title: true,
                     content: true,
                     user: { select: { id: true, name: true } },
-                    likes: {
-                        where: { userId: userId, like: { deletedAt: null } },
-                        select: { id: true },
-                        take: 1,
-                    },
+                    ...select_likes(like_condition),
                     _count: {
                         select: {
                             likes: {
@@ -92,6 +105,11 @@ export class PostRepository implements IPostRepository {
 
     public async findUnique(id: number, userId?: number): Promise<any> {
         try {
+            const where = { like: { deletedAt: null } };
+            if (userId) {
+                where['userId'] = userId;
+            }
+
             return await this.postModel.findUnique({
                 where: { id: id, deletedAt: null },
                 select: {
@@ -99,11 +117,7 @@ export class PostRepository implements IPostRepository {
                     title: true,
                     content: true,
                     user: { select: { id: true, name: true } },
-                    likes: {
-                        where: { userId: userId, like: { deletedAt: null } },
-                        select: { id: true },
-                        take: 1,
-                    },
+                    ...select_likes(where),
                     _count: {
                         select: {
                             likes: {
@@ -117,11 +131,7 @@ export class PostRepository implements IPostRepository {
                             id: true,
                             content: true,
                             user: { select: { id: true, name: true } },
-                            likes: {
-                                where: { userId: userId, like: { deletedAt: null } },
-                                select: { id: true },
-                                take: 1,
-                            },
+                            ...select_likes(where),
                             _count: {
                                 select: {
                                     likes: {
@@ -130,7 +140,7 @@ export class PostRepository implements IPostRepository {
                                 },
                             },
                         },
-                        orderBy: { createdAt: 'desc' },
+                        orderBy: { createdAt: 'asc' },
                         take: 5,
                     },
                 },

@@ -3,7 +3,6 @@ import { ICommentService } from "./models/interfaces/classes/ICommentService";
 import { CommentService } from "./services/commentService";
 import { IService } from "./models/interfaces/classes/IService";
 import { getLogger } from "../../shared/utils/helpers";
-import { PageOptionsDto } from "../../shared/pagination/pageOption.dto";
 import { ICreateCommentRequest } from "./models/interfaces/requests/ICreateCommentRequest";
 
 const TAG = "blogs-be:comment:service";
@@ -49,9 +48,8 @@ export class Service implements IService {
 
     public async findAll(req: any, res: any, next: any): Promise<any> {
         try {
-            const userId = +res.locals.user.id;
-            const { postId, ...pageOptionsDto } = req.query;
-            const data = await this.commentService.getPaginatedList(userId, pageOptionsDto, +postId);
+            const { postId, userId, ...pageOptionsDto } = req.query;
+            const data = await this.commentService.getPaginatedList(pageOptionsDto, +userId, +postId);
             return res.status(200).json(data);
         } catch (error) {
             const log = {

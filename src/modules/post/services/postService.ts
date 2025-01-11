@@ -11,15 +11,15 @@ import { PostMapper } from "../mappers/post.mapper";
 const TAG = "blogs-be:post:postService";
 
 export class PostService implements IPostService {
-    private repository: IPostRepository;
+    private repository: PostRepository;
     private repositoriesFactory: PostRepositoriesFactory;
     private postMapper: PostMapper;
 
-    constructor(repository?: IPostRepository) {
+    constructor(repository?: PostRepository) {
         if (!repository) {
             this.repositoriesFactory = PostRepositoriesFactory.Instance;
 
-            this.repository = this.repositoriesFactory.getRepository(PostRepository.name);
+            this.repository = this.repositoriesFactory.getRepository(PostRepository.name) as any;
         } else {
             this.repository = repository;
         }
@@ -46,7 +46,7 @@ export class PostService implements IPostService {
             const posts = await this.repository.findMany(pageOptionsDto, userId);
             const data = this.postMapper.getItemsWithLikesMapper(posts);
             const total = await this.repository.count(userId);
-            const meta = this.postMapper.getPaginatedListMapper(total, data.length, pageOptionsDto);
+            const meta = this.postMapper.getPageMetaMapper(total, data.length, pageOptionsDto);
             return { meta, data };
         } catch (error) {
             const log = {

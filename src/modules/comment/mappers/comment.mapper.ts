@@ -2,7 +2,7 @@ import { PageMeta } from "../../../shared/pagination/page-meta";
 import { PageOptionsDto } from "../../../shared/pagination/pageOption.dto";
 
 export class CommentMapper {
-    public getPaginatedListMapper(total: number, itemsPerPage: number, options: PageOptionsDto) {
+    public getPageMetaMapper(total: number, itemsPerPage: number, options: PageOptionsDto) {
         const pageOptionsDto = {
             ...options,
             page: +options.page,
@@ -20,7 +20,7 @@ export class CommentMapper {
 
     public getItemsWithLikesMapper(comments: any[]) {
         return comments.map((comment) => {
-            comment.is_liked = !!comment.likes[0];
+            comment.is_liked = !!comment.likes?.length ? comment.likes[0] : false;
             comment.likes = comment._count.likes;
             delete comment._count;
             return comment;

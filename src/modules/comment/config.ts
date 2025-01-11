@@ -27,14 +27,14 @@ export class ServiceConfig implements IConfig {
         {
             url: "/",
             verb: "get",
-            middlewares: [this.middlewareFactory.getMiddleware('AuthMiddleware').execute],
+            middlewares: [this.middlewareFactory.getMiddleware('CheckUserTypeMiddleware').execute],
             function: "findAll",
         },
         {
             url: "/:id",
             verb: "get",
             middlewares: [
-                this.middlewareFactory.getMiddleware('AuthMiddleware').execute,
+                this.middlewareFactory.getMiddleware('CheckUserTypeMiddleware').execute,
                 this.middlewareFactory.getMiddleware('IdValidationMiddleware').execute,
             ],
             function: "findOne",

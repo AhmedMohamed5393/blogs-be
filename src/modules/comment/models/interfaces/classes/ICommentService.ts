@@ -5,7 +5,7 @@ import { IUpdateCommentRequest } from "../requests/IUpdateCommentRequest";
 export interface ICommentService {
     createComment(createDto: CreateDto): Promise<any>;
     
-    getPaginatedList(userId: number, pageOptionsDto: PageOptionsDto, postId?: number): Promise<any>;
+    getPaginatedList(pageOptionsDto: PageOptionsDto, userId?: number, postId?: number): Promise<any>;
 
     getOneById(id: number, userId?: number): Promise<any>;
         

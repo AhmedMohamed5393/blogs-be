@@ -8,7 +8,7 @@ export class PostMapper {
         this.commentMapper = new CommentMapper();
     }
 
-    public getPaginatedListMapper(total: number, itemsPerPage: number, options: PageOptionsDto) {
+    public getPageMetaMapper(total: number, itemsPerPage: number, options: PageOptionsDto) {
         const pageOptionsDto = {
             ...options,
             page: +options.page,
@@ -26,7 +26,7 @@ export class PostMapper {
 
     public getItemsWithLikesMapper(posts: any[]) {
         return posts.map((post) => {
-            post.is_liked = !!post.likes[0];
+            post.is_liked = !!post.likes?.length ? post.likes[0] : false;
             post.likes = post._count.likes;
             delete post._count;
 

@@ -9,6 +9,16 @@ import { IUpdateCommentRequest } from "../models/interfaces/requests/IUpdateComm
 
 const TAG = "blogs-be:comment:commentRepository";
 
+const select_likes = (where: any) => {
+    return !where['userId'] ? {} : {
+        likes: {
+            where: where,
+            select: { id: true },
+            take: 1,
+        },
+    };
+};
+
 export class CommentRepository implements ICommentRepository {
     private database: Database;
     private commentModel: Prisma.CommentDelegate<DefaultArgs, Prisma.PrismaClientOptions>;
@@ -34,7 +44,12 @@ export class CommentRepository implements ICommentRepository {
     
     public async count(userId: number): Promise<any> {
         try {
-            return await this.commentModel.count({ where: { userId: userId, deletedAt: null } });
+            const where = { deletedAt: null };
+            if (userId) {
+                where['userId'] = userId;
+            }
+
+            return await this.commentModel.count({ where });
         } catch (error) {
             const log = {
                 message: error,
@@ -46,14 +61,20 @@ export class CommentRepository implements ICommentRepository {
         }
     }
 
-    public async findMany(userId: number, pageOptionsDto: PageOptionsDto, postId?: number): Promise<any> {
+    public async findMany(pageOptionsDto: PageOptionsDto, userId?: number, postId?: number): Promise<any> {
         try {
             const take = +pageOptionsDto.take || 10;
             const skip = (pageOptionsDto.page - 1) * take || 0;
 
-            const where = { userId: userId, deletedAt: null };
+            const where = { deletedAt: null };
             if (postId) {
                 where['postId'] = postId;
+            }
+
+            const like_condition = { like: { deletedAt: null } };
+            if (userId) {
+                where['userId'] = userId;
+                like_condition['userId'] = userId;
             }
 
             return await this.commentModel.findMany({
@@ -62,11 +83,7 @@ export class CommentRepository implements ICommentRepository {
                     id: true,
                     content: true,
                     user: { select: { id: true, name: true } },
-                    likes: {
-                        where: { userId: userId, like: { deletedAt: null } },
-                        select: { id: true },
-                        take: 1,
-                    },
+                    ...select_likes(like_condition),
                     _count: {
                         select: {
                             likes: {
@@ -77,7 +94,7 @@ export class CommentRepository implements ICommentRepository {
                 },
                 skip: skip,
                 take: take,
-                orderBy: { createdAt: 'desc' },
+                orderBy: { createdAt: 'asc' },
             });
         } catch (error) {
             const log = {
@@ -92,6 +109,11 @@ export class CommentRepository implements ICommentRepository {
 
     public async findUnique(id: number, userId?: number): Promise<any> {
         try {
+            const where = { deletedAt: null, like: { deletedAt: null } };
+            if (userId) {
+                where['userId'] = userId;
+            }
+
             return await this.commentModel.findUnique({
                 where: { id: id, deletedAt: null },
                 select: {
@@ -106,11 +128,7 @@ export class CommentRepository implements ICommentRepository {
                             user: { select: { id: true, name: true } },
                         },
                     },
-                    likes: {
-                        where: { userId: userId, like: { deletedAt: null } },
-                        select: { id: true },
-                        take: 1,
-                    },
+                    ...select_likes(where),
                     _count: {
                         select: {
                             likes: {

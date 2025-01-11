@@ -7,7 +7,7 @@ export interface ICommentRepository {
     
     count(userId: number): Promise<any>;
 
-    findMany(userId: number, pageOptionsDto: PageOptionsDto, postId?: number): Promise<any>;
+    findMany(pageOptionsDto: PageOptionsDto, userId?: number, postId?: number): Promise<any>;
 
     findUnique(id: number, userId?: number): Promise<any>;
 
