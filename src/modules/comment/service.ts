@@ -26,6 +26,9 @@ export class Service implements IService {
                 content: req.body.content,
             };
             const comment = await this.commentService.createComment(payload);
+            if (!comment) {
+                return res.status(422).json({ message: "Post isn't found" });
+            }
 
             return res.status(201).json({
                 message: "Comment is created successfully",

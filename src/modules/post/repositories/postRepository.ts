@@ -63,7 +63,7 @@ export class PostRepository implements IPostRepository {
                     content: true,
                     user: { select: { id: true, name: true } },
                     likes: {
-                        where: { deletedAt: null },
+                        where: { like: { deletedAt: null } },
                         select: { id: true, userId: true },
                     },
                 },
@@ -92,7 +92,7 @@ export class PostRepository implements IPostRepository {
                     content: true,
                     user: { select: { id: true, name: true } },
                     likes: {
-                        where: { deletedAt: null },
+                        where: { like: { deletedAt: null } },
                         select: { id: true, userId: true },
                     },
                     comments: {
@@ -102,12 +102,12 @@ export class PostRepository implements IPostRepository {
                             content: true,
                             user: { select: { id: true, name: true } },
                             likes: {
-                                where: { deletedAt: null },
+                                where: { like: { deletedAt: null } },
                                 select: { id: true, userId: true },
                             },
                         },
                         orderBy: { createdAt: 'desc' },
-                        take: 10,
+                        take: 5,
                     },
                 },
             });
