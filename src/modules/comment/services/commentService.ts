@@ -62,6 +62,8 @@ export class CommentService implements ICommentService {
     public async getOneById(id: number, userId?: number): Promise<any> {
         try {
             const comment = await this.repository.findUnique(id, userId);
+            if (!comment) return;
+
             const data = this.commentMapper.getItemsWithLikesMapper([comment]);
             return data;
         } catch (error) {

@@ -62,6 +62,8 @@ export class PostService implements IPostService {
     public async getOneById(id: number, userId?: number): Promise<any> {
         try {
             const post = await this.repository.findUnique(id, userId);
+            if (!post) return;
+            
             const mappedItems = this.postMapper.getItemsWithLikesMapper([post]);
             return mappedItems[0];
         } catch (error) {
