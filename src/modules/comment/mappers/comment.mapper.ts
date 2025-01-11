@@ -18,9 +18,11 @@ export class CommentMapper {
         return meta;
     }
 
-    public getItemsWithLikesMapper(comments: any[], userId?: number) {
+    public getItemsWithLikesMapper(comments: any[]) {
         return comments.map((comment) => {
-            comment.is_liked = !!comment.likes.find((like) => like.userId == userId);
+            comment.is_liked = !!comment.likes[0];
+            comment.likes = comment._count.likes;
+            delete comment._count;
             return comment;
         });
     }

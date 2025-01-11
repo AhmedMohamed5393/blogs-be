@@ -24,12 +24,14 @@ export class PostMapper {
         return meta;
     }
 
-    public getItemsWithLikesMapper(posts: any[], userId?: number) {
+    public getItemsWithLikesMapper(posts: any[]) {
         return posts.map((post) => {
-            post.is_liked = !!post.likes.find((like) => like.userId == userId);
-            
+            post.is_liked = !!post.likes[0];
+            post.likes = post._count.likes;
+            delete post._count;
+
             if (post.comments?.length) {
-                post.comments = this.commentMapper.getItemsWithLikesMapper(post.comments, userId);
+                post.comments = this.commentMapper.getItemsWithLikesMapper(post.comments);
             }
 
             return post;

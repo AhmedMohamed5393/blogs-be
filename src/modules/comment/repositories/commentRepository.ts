@@ -63,8 +63,16 @@ export class CommentRepository implements ICommentRepository {
                     content: true,
                     user: { select: { id: true, name: true } },
                     likes: {
-                        where: { like: { deletedAt: null } },
-                        select: { id: true, userId: true },
+                        where: { userId: userId, like: { deletedAt: null } },
+                        select: { id: true },
+                        take: 1,
+                    },
+                    _count: {
+                        select: {
+                            likes: {
+                                where: { like: { deletedAt: null } },
+                            },
+                        },
                     },
                 },
                 skip: skip,
@@ -82,7 +90,7 @@ export class CommentRepository implements ICommentRepository {
         }
     }
 
-    public async findUnique(id: number): Promise<any> {
+    public async findUnique(id: number, userId?: number): Promise<any> {
         try {
             return await this.commentModel.findUnique({
                 where: { id: id, deletedAt: null },
@@ -99,8 +107,16 @@ export class CommentRepository implements ICommentRepository {
                         },
                     },
                     likes: {
-                        where: { like: { deletedAt: null } },
-                        select: { id: true, userId: true },
+                        where: { userId: userId, like: { deletedAt: null } },
+                        select: { id: true },
+                        take: 1,
+                    },
+                    _count: {
+                        select: {
+                            likes: {
+                                where: { like: { deletedAt: null } },
+                            },
+                        },
                     },
                 },
             });
@@ -115,13 +131,15 @@ export class CommentRepository implements ICommentRepository {
         }
     }
 
-    public async is_exists(id: number, userId: number, postId?: number): Promise<any> {
+    public async is_exists(id: number, userId?: number, postId?: number): Promise<any> {
         try {
             const where = {
                 id: id,
-                userId: userId,
                 deletedAt: null,
             };
+            if (userId) {
+                where['userId'] = userId;
+            }
             if (postId) {
                 where['postId'] = postId;
             }

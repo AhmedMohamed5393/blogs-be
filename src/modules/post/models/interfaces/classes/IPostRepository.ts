@@ -9,9 +9,9 @@ export interface IPostRepository {
 
     findMany(pageOptionsDto: PageOptionsDto, userId?: number): Promise<any>;
 
-    findUnique(id: number): Promise<any>;
+    findUnique(id: number,userId?: number): Promise<any>;
 
-    is_exists(id: number, userId: number): Promise<any>;
+    is_exists(id: number, userId?: number): Promise<any>;
 
     update(id: number, data: IUpdatePostRequest): Promise<any>;
 

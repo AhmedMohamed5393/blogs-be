@@ -8,6 +8,9 @@ npm install or npm i
 # To build and run the application
 npm run start:dev
 
+# To migrate any changes in database using Prisma ORM
+npx prisma migrate dev --name init
+
 # Notes: 
 1. We use Node.js with version 20.
 2. We need to add new file called ".env" and copy all of the environmental variables from .env.sample file and paste it into the .env file.

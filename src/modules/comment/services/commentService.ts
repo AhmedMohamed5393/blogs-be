@@ -44,7 +44,7 @@ export class CommentService implements ICommentService {
     public async getPaginatedList(userId: number, pageOptionsDto: PageOptionsDto, postId?: number): Promise<any> {
         try {
             const comments = await this.repository.findMany(userId, pageOptionsDto, postId);
-            const items = this.commentMapper.getItemsWithLikesMapper(comments, userId);
+            const items = this.commentMapper.getItemsWithLikesMapper(comments);
             const total = await this.repository.count(userId);
             const result = this.commentMapper.getPaginatedListMapper(total, items.length, pageOptionsDto);
             return result;
@@ -59,12 +59,11 @@ export class CommentService implements ICommentService {
         }
     }
 
-    public async getOneById(id: number): Promise<any> {
+    public async getOneById(id: number, userId?: number): Promise<any> {
         try {
-            const comment = await this.repository.findUnique(id);
-            comment.likes = comment.likes.length;
-
-            return comment;
+            const comment = await this.repository.findUnique(id, userId);
+            const data = this.commentMapper.getItemsWithLikesMapper([comment]);
+            return data;
         } catch (error) {
             const log = {
                 message: error,
@@ -76,7 +75,7 @@ export class CommentService implements ICommentService {
         }
     }
 
-    public async checkExistence(id: number, userId: number, postId?: number): Promise<any> {
+    public async checkExistence(id: number, userId?: number, postId?: number): Promise<any> {
         try {
             return await this.repository.is_exists(id, userId, postId);
         } catch (error) {

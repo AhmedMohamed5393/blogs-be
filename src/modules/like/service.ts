@@ -20,7 +20,7 @@ export class Service implements IService {
             const userId = +res.locals.user.id;
             const itemId = +req.body.postId;
 
-            const item = await this.likeService.checkExistenceOfPostItem(itemId, userId);
+            const item = await this.likeService.checkExistenceOfPostItem(itemId);
             if (!item) {
                 return res.status(422).json({ message: "Item isn't found" });
             }
@@ -49,7 +49,7 @@ export class Service implements IService {
             const userId = +res.locals.user.id;
             const itemId = +req.body.commentId;
 
-            const item = await this.likeService.checkExistenceOfCommentItem(itemId, userId);
+            const item = await this.likeService.checkExistenceOfCommentItem(itemId);
             if (!item) {
                 return res.status(422).json({ message: "Item isn't found" });
             }

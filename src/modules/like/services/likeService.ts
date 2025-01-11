@@ -71,9 +71,9 @@ export class LikeService implements ILikeService {
         }
     }
 
-    public async checkExistenceOfPostItem(id: number, userId: number): Promise<any> {
+    public async checkExistenceOfPostItem(id: number): Promise<any> {
         try {
-            return await this.postService.checkExistence(id, userId);
+            return await this.postService.checkExistence(id);
         } catch (error) {
             const log = {
                 message: error,
@@ -85,9 +85,9 @@ export class LikeService implements ILikeService {
         }
     }
 
-    public async checkExistenceOfCommentItem(id: number, userId: number): Promise<any> {
+    public async checkExistenceOfCommentItem(id: number): Promise<any> {
         try {
-            return await this.commentService.checkExistence(id, userId);
+            return await this.commentService.checkExistence(id);
         } catch (error) {
             const log = {
                 message: error,

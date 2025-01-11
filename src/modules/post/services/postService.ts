@@ -44,7 +44,7 @@ export class PostService implements IPostService {
     public async getPaginatedList(pageOptionsDto: PageOptionsDto, userId?: number): Promise<any> {
         try {
             const posts = await this.repository.findMany(pageOptionsDto, userId);
-            const data = this.postMapper.getItemsWithLikesMapper(posts, userId);
+            const data = this.postMapper.getItemsWithLikesMapper(posts);
             const total = await this.repository.count(userId);
             const meta = this.postMapper.getPaginatedListMapper(total, data.length, pageOptionsDto);
             return { meta, data };
@@ -61,8 +61,8 @@ export class PostService implements IPostService {
 
     public async getOneById(id: number, userId?: number): Promise<any> {
         try {
-            const post = await this.repository.findUnique(id);
-            const mappedItems = this.postMapper.getItemsWithLikesMapper([post], userId);
+            const post = await this.repository.findUnique(id, userId);
+            const mappedItems = this.postMapper.getItemsWithLikesMapper([post]);
             return mappedItems[0];
         } catch (error) {
             const log = {
@@ -75,7 +75,7 @@ export class PostService implements IPostService {
         }
     }
 
-    public async checkExistence(id: number, userId: number): Promise<any> {
+    public async checkExistence(id: number, userId?: number): Promise<any> {
         try {
             return await this.repository.is_exists(id, userId);
         } catch (error) {

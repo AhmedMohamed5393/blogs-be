@@ -5,7 +5,7 @@ export interface ILikeService {
 
     assignLikeToItemById(id: number, is_liked: boolean): Promise<any>;
 
-    checkExistenceOfPostItem(id: number, userId: number): Promise<any>;
+    checkExistenceOfPostItem(id: number): Promise<any>;
 
-    checkExistenceOfCommentItem(id: number, userId: number): Promise<any>;
+    checkExistenceOfCommentItem(id: number): Promise<any>;
 }

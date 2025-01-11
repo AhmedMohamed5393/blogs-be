@@ -63,8 +63,16 @@ export class PostRepository implements IPostRepository {
                     content: true,
                     user: { select: { id: true, name: true } },
                     likes: {
-                        where: { like: { deletedAt: null } },
-                        select: { id: true, userId: true },
+                        where: { userId: userId, like: { deletedAt: null } },
+                        select: { id: true },
+                        take: 1,
+                    },
+                    _count: {
+                        select: {
+                            likes: {
+                                where: { like: { deletedAt: null } },
+                            },
+                        },
                     },
                 },
                 skip: skip,
@@ -82,7 +90,7 @@ export class PostRepository implements IPostRepository {
         }
     }
 
-    public async findUnique(id: number): Promise<any> {
+    public async findUnique(id: number, userId?: number): Promise<any> {
         try {
             return await this.postModel.findUnique({
                 where: { id: id, deletedAt: null },
@@ -92,8 +100,16 @@ export class PostRepository implements IPostRepository {
                     content: true,
                     user: { select: { id: true, name: true } },
                     likes: {
-                        where: { like: { deletedAt: null } },
-                        select: { id: true, userId: true },
+                        where: { userId: userId, like: { deletedAt: null } },
+                        select: { id: true },
+                        take: 1,
+                    },
+                    _count: {
+                        select: {
+                            likes: {
+                                where: { like: { deletedAt: null } },
+                            },
+                        },
                     },
                     comments: {
                         where: { deletedAt: null },
@@ -102,8 +118,16 @@ export class PostRepository implements IPostRepository {
                             content: true,
                             user: { select: { id: true, name: true } },
                             likes: {
-                                where: { like: { deletedAt: null } },
-                                select: { id: true, userId: true },
+                                where: { userId: userId, like: { deletedAt: null } },
+                                select: { id: true },
+                                take: 1,
+                            },
+                            _count: {
+                                select: {
+                                    likes: {
+                                        where: { like: { deletedAt: null } },
+                                    },
+                                },
                             },
                         },
                         orderBy: { createdAt: 'desc' },
@@ -122,10 +146,15 @@ export class PostRepository implements IPostRepository {
         }
     }
 
-    public async is_exists(id: number, userId: number): Promise<any> {
+    public async is_exists(id: number, userId?: number): Promise<any> {
         try {
+            const where = { id: id, deletedAt: null };
+            if (userId) {
+                where['userId'] = userId;
+            }
+
             return await this.postModel.findUnique({
-                where: { id: id, userId: userId, deletedAt: null },
+                where: where,
                 select: { id: true },
             });
         } catch (error) {

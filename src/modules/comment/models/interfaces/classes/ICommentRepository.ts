@@ -9,9 +9,9 @@ export interface ICommentRepository {
 
     findMany(userId: number, pageOptionsDto: PageOptionsDto, postId?: number): Promise<any>;
 
-    findUnique(id: number): Promise<any>;
+    findUnique(id: number, userId?: number): Promise<any>;
 
-    is_exists(id: number, userId: number, postId?: number): Promise<any>;
+    is_exists(id: number, userId?: number, postId?: number): Promise<any>;
 
     update(id: number, data: IUpdateCommentRequest): Promise<any>;
 
