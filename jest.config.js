@@ -1,10 +1,9 @@
 module.exports = {
-    "roots": [
-        "./tests"
-    ],
-    "transform": {
-        "^.+\\.tsx?$": "ts-jest"
-    },
     testEnvironment: 'node',
-    setupFilesAfterEnv: ["<rootDir>/tests/setup.js"]
+    preset: 'ts-jest',
+    moduleFileExtensions: ['ts', 'js'],
+    testMatch: ['**/*.test.ts'],
+    moduleNameMapper: {
+        '^@database/(.*)$': '<rootDir>/src/database/$1',
+    },
 }

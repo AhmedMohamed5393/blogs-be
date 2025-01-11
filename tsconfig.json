@@ -9,7 +9,11 @@
         "rootDir": "./src",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "outDir": "dist"
+        "outDir": "dist",
+        "baseUrl": ".",
+        "paths": {
+            "@database/*": ["src/database/*"]
+        }
     },
     "include": [
         "src/**/*"
