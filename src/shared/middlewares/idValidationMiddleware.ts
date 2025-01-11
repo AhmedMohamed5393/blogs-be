@@ -10,8 +10,8 @@ export class IdValidationMiddleware implements IMiddleware {
     public async execute(req: Request, res: Response, next: NextFunction) {        
         try {
             const id = req.params.id;
-            if (!id || typeof +id != "number") {
-                res.status(400).json({ message: "Invalid id" });
+            if (!id || !Number(id)) {
+                return res.status(400).json({ message: "Invalid id" });
             }
             
             next();
