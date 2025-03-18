@@ -1,8 +1,7 @@
 import { EventEmitter } from "events";
 import { getLogger } from "../shared/utils/helpers";
 import { ILogger } from "../shared/interfaces/ILogger";
-import { Prisma, PrismaClient } from '@prisma/client';
-import { DefaultArgs } from "@prisma/client/runtime/library";
+import { PrismaClient } from '@prisma/client';
 
 const TAG = "blogs-be:database";
 
